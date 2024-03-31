@@ -68,10 +68,28 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	//turn left button settings
 	if (GPIO_Pin == S1_Pin) {
 		HAL_UART_Transmit(&huart2, "S1\r\n", 4, 10);
+		if (HAL_GetTick() < (left_last_press_tick + 300)) { // if last press was in the last 300ms
+				left_toggles = 0xFFFFFF; // a long time toggling (infinite)
+			} else {
+				left_toggles = 6; // 3 times blinking (if it's pressed once)
+			}
+			left_last_press_tick = HAL_GetTick();
+		// for deactivate right button if it's active
+		} else if (GPIO_Pin == S2_Pin) {
+			left_toggles = 0;
 	}
    //turn right button settings
 	if (GPIO_Pin == S2_Pin) {
 		HAL_UART_Transmit(&huart2, "S2\r\n", 4, 10);
+		if (HAL_GetTick() < (right_last_press_tick + 300)) { // if last press was in the last 300ms
+			right_toggles = 0xFFFFFF; // a long time toggling (infinite)
+		} else {
+			right_toggles = 6; // 3 times blinking (if it's pressed once)
+		}
+		right_last_press_tick = HAL_GetTick();
+	//for deactivate left button it it's active
+	} else if (GPIO_Pin == S1_Pin) {
+		right_toggles = 0;
 
 	}
    //parking signal button settings
@@ -84,7 +102,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 void heartbeat(void)
 {
 	    static uint32_t last_toggle = 0;
-	    if (HAL_GetTick() - last_toggle >= 1000) { // Toggle every 1000ms (1Hz)
+	    if (HAL_GetTick() - last_toggle >= 1000) { // Toggle every second (1Hz)
 	        HAL_GPIO_TogglePin(D1_GPIO_Port, D1_Pin);
 	        last_toggle = HAL_GetTick();
 	    }
@@ -95,7 +113,7 @@ void turn_signal_left(void)
 	static uint32_t turn_toggle_tick = 0;
 	if (turn_toggle_tick < HAL_GetTick()) {
 		if (left_toggles > 0) {
-			turn_toggle_tick = HAL_GetTick() + 250; //time of blinking
+			turn_toggle_tick = HAL_GetTick() + 500; //time of blinking
 			HAL_GPIO_TogglePin(D3_GPIO_Port, D3_Pin);
 			left_toggles--;
 		} else {
@@ -110,7 +128,7 @@ void turn_signal_right(void)
 	static uint32_t turn_toggle_tick = 0;
 	if (turn_toggle_tick < HAL_GetTick()) {
 		if (right_toggles > 0) {
-			turn_toggle_tick = HAL_GetTick() + 250; //time of blinking
+			turn_toggle_tick = HAL_GetTick() + 500; //time of blinking
 			HAL_GPIO_TogglePin(D4_GPIO_Port, D4_Pin);
 			right_toggles--;
 		} else {
@@ -125,7 +143,7 @@ void parking_signal(void)
 	static uint32_t parking_toggle_tick = 0;
 	if(parking_toggle_tick < HAL_GetTick()){
 		if(parking_toggles > 0){
-			parking_toggle_tick = HAL_GetTick()+2000; //time in 2Hz
+			parking_toggle_tick = HAL_GetTick()+250;
 		    HAL_GPIO_TogglePin(D2_GPIO_Port, D2_Pin);
 		    parking_toggles--;
 		}else {
