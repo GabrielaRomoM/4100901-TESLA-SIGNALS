@@ -95,7 +95,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
    //parking signal button settings
     if (GPIO_Pin == S3_Pin) {
         HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
-        parking_toggles = 6;
+        parking_toggles = 240; // number of blinks for 2 minutes (accord to rules)
       }
 }
 //Heart beat setting to indicate proper system operation
@@ -143,7 +143,7 @@ void parking_signal(void)
 	static uint32_t parking_toggle_tick = 0;
 	if(parking_toggle_tick < HAL_GetTick()){
 		if(parking_toggles > 0){
-			parking_toggle_tick = HAL_GetTick()+250;
+			parking_toggle_tick = HAL_GetTick()+500;
 		    HAL_GPIO_TogglePin(D2_GPIO_Port, D2_Pin);
 		    parking_toggles--;
 		}else {
