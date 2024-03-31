@@ -58,10 +58,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void heartbeat(void);
-void turn_signal_left(void);
-void turn_signal_right(void);
-void parking_signal(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -93,14 +90,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	//for deactivate left button it it's active
 	} else if (GPIO_Pin == S1_Pin) {
 		right_toggles = 0;
+
 	}
-
-	//parking signal button settings
-	    if (GPIO_Pin == S3_Pin) {
-	        HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
-	        parking_toggles = 6;
-	    }
-
+   //parking signal button settings
+    if (GPIO_Pin == S3_Pin) {
+        HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
+        parking_toggles = 6;
+      }
 }
 //Heart beat setting to indicate proper system operation
 void heartbeat(void)
@@ -147,7 +143,7 @@ void parking_signal(void)
 	static uint32_t parking_toggle_tick = 0;
 	if(parking_toggle_tick < HAL_GetTick()){
 		if(parking_toggles > 0){
-			parking_toggle_tick = HAL_GetTick()+250; //blink time accord to rules
+			parking_toggle_tick = HAL_GetTick()+250;
 		    HAL_GPIO_TogglePin(D2_GPIO_Port, D2_Pin);
 		    parking_toggles--;
 		}else {
