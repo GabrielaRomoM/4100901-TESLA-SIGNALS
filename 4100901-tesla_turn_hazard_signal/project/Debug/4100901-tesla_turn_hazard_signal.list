@@ -454,24 +454,25 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
  8000560:	4b0f      	ldr	r3, [pc, #60]	; (80005a0 <HAL_GPIO_EXTI_Callback+0xdc>)
  8000562:	2200      	movs	r2, #0
  8000564:	601a      	str	r2, [r3, #0]
-
 	}
-   //parking signal button settings
-    if (GPIO_Pin == S3_Pin) {
+
+	//parking signal button settings
+	    if (GPIO_Pin == S3_Pin) {
  8000566:	88fb      	ldrh	r3, [r7, #6]
  8000568:	2b01      	cmp	r3, #1
  800056a:	d108      	bne.n	800057e <HAL_GPIO_EXTI_Callback+0xba>
-        HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
+	        HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
  800056c:	230a      	movs	r3, #10
  800056e:	2204      	movs	r2, #4
  8000570:	490c      	ldr	r1, [pc, #48]	; (80005a4 <HAL_GPIO_EXTI_Callback+0xe0>)
  8000572:	4806      	ldr	r0, [pc, #24]	; (800058c <HAL_GPIO_EXTI_Callback+0xc8>)
  8000574:	f002 f9bc 	bl	80028f0 <HAL_UART_Transmit>
-        parking_toggles = 6;
+	        parking_toggles = 6;
  8000578:	4b0b      	ldr	r3, [pc, #44]	; (80005a8 <HAL_GPIO_EXTI_Callback+0xe4>)
  800057a:	2206      	movs	r2, #6
  800057c:	601a      	str	r2, [r3, #0]
-      }
+	    }
+
 }
  800057e:	bf00      	nop
  8000580:	3708      	adds	r7, #8
@@ -647,7 +648,7 @@ void parking_signal(void)
  80006a4:	681b      	ldr	r3, [r3, #0]
  80006a6:	2b00      	cmp	r3, #0
  80006a8:	d010      	beq.n	80006cc <parking_signal+0x3c>
-			parking_toggle_tick = HAL_GetTick()+250;
+			parking_toggle_tick = HAL_GetTick()+250; //blink time accord to rules
  80006aa:	f000 faa1 	bl	8000bf0 <HAL_GetTick>
  80006ae:	4603      	mov	r3, r0
  80006b0:	33fa      	adds	r3, #250	; 0xfa
