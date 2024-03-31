@@ -89,6 +89,50 @@ void heartbeat(void)
 	        last_toggle = HAL_GetTick();
 	    }
 }
+//LED setting for left turn signal (time and function depending on conditions)
+void turn_signal_left(void)
+{
+	static uint32_t turn_toggle_tick = 0;
+	if (turn_toggle_tick < HAL_GetTick()) {
+		if (left_toggles > 0) {
+			turn_toggle_tick = HAL_GetTick() + 250; //time of blinking
+			HAL_GPIO_TogglePin(D3_GPIO_Port, D3_Pin);
+			left_toggles--;
+		} else {
+			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, 1);
+		}
+
+	}
+}
+//LED setting for right turn signal (time and function depending on conditions)
+void turn_signal_right(void)
+{
+	static uint32_t turn_toggle_tick = 0;
+	if (turn_toggle_tick < HAL_GetTick()) {
+		if (right_toggles > 0) {
+			turn_toggle_tick = HAL_GetTick() + 250; //time of blinking
+			HAL_GPIO_TogglePin(D4_GPIO_Port, D4_Pin);
+			right_toggles--;
+		} else {
+			HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, 1);
+		}
+
+	}
+}
+//LED setting for parking signal (time and function depending on conditions)
+void parking_signal(void)
+{
+	static uint32_t parking_toggle_tick = 0;
+	if(parking_toggle_tick < HAL_GetTick()){
+		if(parking_toggles > 0){
+			parking_toggle_tick = HAL_GetTick()+2000; //time in 2Hz
+		    HAL_GPIO_TogglePin(D2_GPIO_Port, D2_Pin);
+		    parking_toggles--;
+		}else {
+			HAL_GPIO_WritePin(D2_GPIO_Port,D2_Pin,1);
+		}
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -130,6 +174,9 @@ int main(void)
   {
     /* USER CODE END WHILE */
       heartbeat();
+      turn_signal_left();
+      turn_signal_right();
+      parking_signal();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
