@@ -43,6 +43,13 @@
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+//variables to setting number of blinks
+uint32_t left_toggles = 0;
+uint32_t right_toggles = 0;
+uint32_t parking_toggles = 0;
+//variables to save last register of press buttons.
+uint32_t left_last_press_tick = 0;
+uint32_t right_last_press_tick = 0;
 
 /* USER CODE END PV */
 
@@ -56,7 +63,32 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	//turn left button settings
+	if (GPIO_Pin == S1_Pin) {
+		HAL_UART_Transmit(&huart2, "S1\r\n", 4, 10);
+	}
+   //turn right button settings
+	if (GPIO_Pin == S2_Pin) {
+		HAL_UART_Transmit(&huart2, "S2\r\n", 4, 10);
 
+	}
+
+    if (GPIO_Pin == S3_Pin) {
+        HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
+        parking_toggles = 6;
+      }
+}
+//Heart beat setting to indicate proper system operation
+void heartbeat(void)
+{
+	    static uint32_t last_toggle = 0;
+	    if (HAL_GetTick() - last_toggle >= 1000) { // Toggle every 1000ms (1Hz)
+	        HAL_GPIO_TogglePin(D1_GPIO_Port, D1_Pin);
+	        last_toggle = HAL_GetTick();
+	    }
+}
 /* USER CODE END 0 */
 
 /**
@@ -129,7 +161,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
   RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 8;
+  RCC_OscInitStruct.PLL.PLLN = 40;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
@@ -147,7 +179,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
   {
     Error_Handler();
   }
