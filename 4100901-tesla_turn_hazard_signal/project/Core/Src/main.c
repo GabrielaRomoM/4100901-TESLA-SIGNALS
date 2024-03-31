@@ -74,7 +74,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		HAL_UART_Transmit(&huart2, "S2\r\n", 4, 10);
 
 	}
-
+   //parking signal button settings
     if (GPIO_Pin == S3_Pin) {
         HAL_UART_Transmit(&huart2, "S3\r\n", 4, 10);
         parking_toggles = 6;
@@ -129,7 +129,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+      heartbeat();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
