@@ -1,4 +1,4 @@
-# 4100901-tesla-turn-hazard-signal
+# 4100901-TESLA-SIGNALS
 This repository contains an aproach to implement the tesla turn and hazard signals.
 
 # Current Functionality 
